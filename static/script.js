@@ -1,4 +1,6 @@
-
+var yes_id = [];
+var no_id = [];
+var skip_id = [];
 //Modal Data Content
 function modal_fn() {
   document.getElementById("product-modal").innerHTML = document.getElementById("product-body").innerHTML;
@@ -11,6 +13,9 @@ function modal_fn() {
 
 
 function myFunction() {
+  yes_id = [];
+  no_id = [];
+  skip_id = [];
   var api_var1 = document.getElementById("api_var1").innerHTML;
   var api_url = document.getElementById("api_url").innerHTML;
   //console.log(api_var1)
@@ -98,6 +103,12 @@ document.getElementById("remote-solutions").innerHTML += solution.remoteSolution
 
 
 }
+yes_id.push(parseInt(id))
+//no_id.push(parseInt(id))
+//skip_id.push(parseInt(id))
+console.log(yes_id)
+console.log(no_id)
+console.log(skip_id)
 //console.log(this.id)
 if (nextQuestion.symptomId != -1){
 document.getElementById("question").innerHTML = nextQuestion.symptomQuestion+'<p><button onclick = "click_yes('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px; color:gray!important; border-radius: 10px;">Yes</button><button onclick = "click_no('+id+','+nextQuestion.symptomId+')" style="width: 60px; color:gray!important; height: 30px;border-radius: 10px;">No</button><button onclick = "click_skip('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px; color:gray!important; border-radius: 10px;">Skip</button><p>';
@@ -119,7 +130,8 @@ loadDoc(api_url,api_var1)
 
 
 
-function click_yes(previd,id) {
+function click_yes(previd, id) {
+  yes_id.push(parseInt(id))
   var api_var1 = document.getElementById("api_var1").innerHTML;
   var api_url = document.getElementById("api_url").innerHTML;
   document.getElementById("question").innerHTML ='<div class="spinner-border" role="status"><span class="sr-only">'+"Loading..."+'</span></div>'
@@ -135,16 +147,23 @@ function click_yes(previd,id) {
     })
     .then(response => response.json())
   };
-  async function loadyes(api_url,api_var1,previd,id) {
+  async function loadyes(api_url,api_var1) {
+  //var api_id = [];
+  //api_id.push(previd,id);
+  //console.log(api_id)
+  //yes_id.push(parseInt(id))
+  console.log("click yes:-yes_id", yes_id)
+  console.log("click yes:-no_id",no_id)
+  console.log("click yes:-skip_id",skip_id)
   var nextQuestion = await postRequest(api_url+'/GetNextSymptomQuestion', {UniqueProductIdentifier: api_var1,
-                                                                          SymptomsThatArePresent: [parseInt(previd),id],
-                                                                          SymptomsThatAreNOTPresent: [],
-                                                                          SymptomsThatWereSkipped: []})
+                                                                          SymptomsThatArePresent: yes_id,
+                                                                          SymptomsThatAreNOTPresent: no_id,
+                                                                          SymptomsThatWereSkipped: skip_id})
 
   var solution_yes = await postRequest(api_url+'/PredictPartsGivenSymptoms', {UniqueProductIdentifier: api_var1,
-                                                                              SymptomsThatArePresent: [parseInt(previd),id],
-                                                                              SymptomsThatAreNOTPresent: [],
-                                                                              SymptomsThatWereSkipped: []})
+                                                                              SymptomsThatArePresent: yes_id,
+                                                                              SymptomsThatAreNOTPresent: no_id,
+                                                                              SymptomsThatWereSkipped: skip_id})
 
 
   let sols =  solution_yes.partsRecommendation.map(function(sol) {
@@ -157,7 +176,7 @@ document.getElementById("remote-solutions").innerHTML += solution_yes.remoteSolu
 }).join("");
 
 if (nextQuestion.symptomId != -1) {
-document.getElementById("question").innerHTML = '<span id='+nextQuestion.symptomId+'>'+nextQuestion.symptomQuestion+'</span><p><button onclick = "click_yes('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px;border-radius: 10px; color:gray!important;">Yes</button><button onclick = "click_no('+nextQuestion.symptomId+')" style="width: 60px;color:gray!important;height: 30px;border-radius: 10px;">No</button><button onclick = "click_skip('+nextQuestion.symptomId+')" style="width: 60px;height: 30px; color:gray!important; border-radius: 10px;">Skip</button><p>';
+document.getElementById("question").innerHTML = '<span id='+nextQuestion.symptomId+'>'+nextQuestion.symptomQuestion+'</span><p><button onclick = "click_yes('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px;border-radius: 10px; color:gray!important;">Yes</button><button onclick = "click_no('+id+','+nextQuestion.symptomId+')" style="width: 60px;color:gray!important;height: 30px;border-radius: 10px;">No</button><button onclick = "click_skip('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px; color:gray!important; border-radius: 10px;">Skip</button><p>';
 }
 if (nextQuestion.symptomId == -1) {
 document.getElementById("question").innerHTML = nextQuestion.symptomQuestion;
@@ -200,7 +219,8 @@ loadyes(api_url,api_var1,previd,id)
 
 
 
-function click_no(previd,id) {
+function click_no(previd, id) {
+  no_id.push(parseInt(id));
   var api_var1 = document.getElementById("api_var1").innerHTML;
   var api_url = document.getElementById("api_url").innerHTML;
   document.getElementById("question").innerHTML ='<div class="spinner-border" role="status"><span class="sr-only">'+"Loading..."+'</span></div>'
@@ -216,18 +236,21 @@ function click_no(previd,id) {
     .then(response => response.json())
   };
   async function loadno(api_url,api_var1,previd,id) {
+    console.log("click no-yes_id", yes_id)
+    console.log("click no-no_id",no_id)
+    console.log("click no-skip_id",skip_id)
   var nextQuestion = await postRequest(api_url+'/GetNextSymptomQuestion', {UniqueProductIdentifier: api_var1,
-                                                                          SymptomsThatArePresent: [parseInt(previd)],
-                                                                          SymptomsThatAreNOTPresent: [id],
-                                                                          SymptomsThatWereSkipped: []})
+                                                                          SymptomsThatArePresent: yes_id,
+                                                                          SymptomsThatAreNOTPresent: no_id,
+                                                                          SymptomsThatWereSkipped: skip_id})
 
 
 
 
 var solution_no = await postRequest(api_url+'/PredictPartsGivenSymptoms', {UniqueProductIdentifier: api_var1,
-                                                                          SymptomsThatArePresent: [parseInt(previd)],
-                                                                          SymptomsThatAreNOTPresent: [id],
-                                                                          SymptomsThatWereSkipped: []})
+                                                                          SymptomsThatArePresent: yes_id,
+                                                                          SymptomsThatAreNOTPresent: no_id,
+                                                                          SymptomsThatWereSkipped: skip_id})
 
 
 let sols =  solution_no.partsRecommendation.map(function(sol) {
@@ -239,7 +262,7 @@ document.getElementById("remote-solutions").innerHTML += solution_no.remoteSolut
                     return  '<p style="padding-left:50px">*'+r_sol+'<p>';
 }).join("");
 if (nextQuestion.symptomId != -1) {
-document.getElementById("question").innerHTML = '<span id='+nextQuestion.symptomId+'>'+nextQuestion.symptomQuestion+'</span><p><button onclick = "click_yes('+nextQuestion.symptomId+')" style="width: 60px;color:gray!important;height: 30px;border-radius: 10px;">Yes</button><button onclick = "click_no('+nextQuestion.symptomId+')" style="width: 60px;height: 30px;color:gray!important;border-radius: 10px;">No</button><button onclick = "click_skip('+nextQuestion.symptomId+')" style="width: 60px;height: 30px;color:gray!important;border-radius: 10px;">Skip</button><p>';
+document.getElementById("question").innerHTML = '<span id='+nextQuestion.symptomId+'>'+nextQuestion.symptomQuestion+'</span><p><button onclick = "click_yes('+id+','+nextQuestion.symptomId+')" style="width: 60px;color:gray!important;height: 30px;border-radius: 10px;">Yes</button><button onclick = "click_no('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px;color:gray!important;border-radius: 10px;">No</button><button onclick = "click_skip('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px;color:gray!important;border-radius: 10px;">Skip</button><p>';
 }
 
 if (nextQuestion.symptomId == -1) {
@@ -278,7 +301,9 @@ loadno(api_url,api_var1,previd,id)
 
 
 
-function click_skip(previd,id) {
+function click_skip(previd, id) {
+  skip_id.push(id)
+  console.log(id)
   var api_var1 = document.getElementById("api_var1").innerHTML;
   var api_url = document.getElementById("api_url").innerHTML;
   document.getElementById("question").innerHTML ='<div class="spinner-border" role="status"><span class="sr-only">'+"Loading..."+'</span></div>'
@@ -294,15 +319,18 @@ function click_skip(previd,id) {
     .then(response => response.json())
   };
   async function loadskip(api_url,api_var1,previd,id) {
+    console.log("click skip-yes_id", yes_id)
+    console.log("click skip-no_id",no_id)
+    console.log("click skip-skip_id",skip_id)
   var nextQuestion = await postRequest(api_url+'/GetNextSymptomQuestion', {UniqueProductIdentifier: api_var1,
-                                                                                                                              SymptomsThatArePresent: [parseInt(previd)],
-                                                                                                                              SymptomsThatAreNOTPresent: [],
-                                                                                                                              SymptomsThatWereSkipped: [id]})
+                                                                            SymptomsThatArePresent: yes_id,
+                                                                            SymptomsThatAreNOTPresent: no_id,
+                                                                            SymptomsThatWereSkipped: skip_id})
 
 var solution_skip = await postRequest(api_url+'/PredictPartsGivenSymptoms', {UniqueProductIdentifier: api_var1,
-                                                                                                                              SymptomsThatArePresent: [parseInt(previd)],
-                                                                                                                              SymptomsThatAreNOTPresent: [],
-                                                                                                                              SymptomsThatWereSkipped: [id]})
+                                                                              SymptomsThatArePresent: yes_id,
+                                                                                SymptomsThatAreNOTPresent: no_id,
+                                                                              SymptomsThatWereSkipped: skip_id})
 
 
 let sols =  solution_skip.partsRecommendation.map(function(sol) {
@@ -315,7 +343,7 @@ document.getElementById("remote-solutions").innerHTML += solution_skip.remoteSol
 }).join("");
 
 if (nextQuestion.symptomId != -1) {
-document.getElementById("question").innerHTML = '<span id='+nextQuestion.symptomId+'>'+nextQuestion.symptomQuestion+'</span><p><button onclick = "click_yes('+nextQuestion.symptomId+')" style="width: 60px;color:gray!important;height: 30px;border-radius: 10px;">Yes</button><button onclick = "click_no('+nextQuestion.symptomId+')" style="width: 60px;height: 30px;color:gray!important;border-radius: 10px;">No</button><button onclick = "click_skip('+nextQuestion.symptomId+')" style="width: 60px;height: 30px;color:gray!important;border-radius: 10px;">Skip</button><p>';
+document.getElementById("question").innerHTML = '<span id='+nextQuestion.symptomId+'>'+nextQuestion.symptomQuestion+'</span><p><button onclick = "click_yes('+id+','+nextQuestion.symptomId+')" style="width: 60px;color:gray!important;height: 30px;border-radius: 10px;">Yes</button><button onclick = "click_no('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px;color:gray!important;border-radius: 10px;">No</button><button onclick = "click_skip('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px;color:gray!important;border-radius: 10px;">Skip</button><p>';
 }
 if (nextQuestion.symptomId == -1) {
   document.getElementById("question").innerHTML = nextQuestion.symptomQuestion;
