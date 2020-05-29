@@ -6,13 +6,14 @@ function modal_fn() {
   document.getElementById("product-modal").innerHTML = document.getElementById("product-body").innerHTML;
   document.getElementById("solutions-modal").innerHTML = document.getElementById("solutions").innerHTML;
   document.getElementById("problems-modal").innerHTML = document.getElementById("myUL").innerHTML;
-  //document.getElementById("searchBar").innerHTML = '<input onfocus="this.value=''" style="font-family: FontAwesome;" type="text" id="myInput" onkeyup="search()" placeholder="&#xf002; Search for names.." title="Type in a name">';
+  document.getElementById("searchBar").innerHTML = '<input style="font-family:FontAwesome;" id="myInput" type="text"  onkeyup="search()" placeholder="&#xf002; Search for names.." title="Type in a name">';
 
   return document.getElementById("remote-modal").innerHTML = document.getElementById("remote-solutions").innerHTML;
 }
 
 
 function myFunction() {
+  document.getElementById("myInput").value='';
   yes_id = [];
   no_id = [];
   skip_id = [];
@@ -91,8 +92,12 @@ function myFunction() {
 
 
 let sols =  solution.partsRecommendation.map(function(sol) {
-                    return  '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:blue!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
-});
+                              if ( sol.probablityPercentage > 75 ){
+                                    return  '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:green!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
+                                    }
+                                      return '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:blue!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
+
+                                      });
 document.getElementById("solutions").innerHTML = sols.join("");//solution.partsRecommendation[0].partId
 
 document.getElementById("remote-solutions").innerHTML = '<h4>Possible remote solutions:</h4>'
@@ -106,9 +111,9 @@ document.getElementById("remote-solutions").innerHTML += solution.remoteSolution
 yes_id.push(parseInt(id))
 //no_id.push(parseInt(id))
 //skip_id.push(parseInt(id))
-console.log(yes_id)
-console.log(no_id)
-console.log(skip_id)
+//console.log(yes_id)
+//console.log(no_id)
+//console.log(skip_id)
 //console.log(this.id)
 if (nextQuestion.symptomId != -1){
 document.getElementById("question").innerHTML = nextQuestion.symptomQuestion+'<p><button onclick = "click_yes('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px; color:gray!important; border-radius: 10px;">Yes</button><button onclick = "click_no('+id+','+nextQuestion.symptomId+')" style="width: 60px; color:gray!important; height: 30px;border-radius: 10px;">No</button><button onclick = "click_skip('+id+','+nextQuestion.symptomId+')" style="width: 60px;height: 30px; color:gray!important; border-radius: 10px;">Skip</button><p>';
@@ -152,9 +157,9 @@ function click_yes(previd, id) {
   //api_id.push(previd,id);
   //console.log(api_id)
   //yes_id.push(parseInt(id))
-  console.log("click yes:-yes_id", yes_id)
-  console.log("click yes:-no_id",no_id)
-  console.log("click yes:-skip_id",skip_id)
+  //console.log("click yes:-yes_id", yes_id)
+  //console.log("click yes:-no_id",no_id)
+  //console.log("click yes:-skip_id",skip_id)
   var nextQuestion = await postRequest(api_url+'/GetNextSymptomQuestion', {UniqueProductIdentifier: api_var1,
                                                                           SymptomsThatArePresent: yes_id,
                                                                           SymptomsThatAreNOTPresent: no_id,
@@ -167,7 +172,10 @@ function click_yes(previd, id) {
 
 
   let sols =  solution_yes.partsRecommendation.map(function(sol) {
-                              return  '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:blue!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
+                              if ( sol.probablityPercentage > 75 ){
+                              return  '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:green!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
+                            }
+                            return '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:blue!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
                             })
 document.getElementById("solutions").innerHTML = sols.join("");
 document.getElementById("remote-solutions").innerHTML = '<h4>Possible remote solutions:</h4>'
@@ -236,9 +244,9 @@ function click_no(previd, id) {
     .then(response => response.json())
   };
   async function loadno(api_url,api_var1,previd,id) {
-    console.log("click no-yes_id", yes_id)
-    console.log("click no-no_id",no_id)
-    console.log("click no-skip_id",skip_id)
+    //console.log("click no-yes_id", yes_id)
+    //console.log("click no-no_id",no_id)
+    //console.log("click no-skip_id",skip_id)
   var nextQuestion = await postRequest(api_url+'/GetNextSymptomQuestion', {UniqueProductIdentifier: api_var1,
                                                                           SymptomsThatArePresent: yes_id,
                                                                           SymptomsThatAreNOTPresent: no_id,
@@ -254,8 +262,11 @@ var solution_no = await postRequest(api_url+'/PredictPartsGivenSymptoms', {Uniqu
 
 
 let sols =  solution_no.partsRecommendation.map(function(sol) {
-                            return  '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:blue!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
-                          })
+                                if ( sol.probablityPercentage > 75 ){
+                                        return  '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:green!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
+                                        }
+                                        return '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:blue!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
+                                      })
 document.getElementById("solutions").innerHTML = sols.join("");
 document.getElementById("remote-solutions").innerHTML = '<h4>Possible remote solutions:</h4>'
 document.getElementById("remote-solutions").innerHTML += solution_no.remoteSolutions.remoteSolutions.map(function(r_sol) {
@@ -303,7 +314,7 @@ loadno(api_url,api_var1,previd,id)
 
 function click_skip(previd, id) {
   skip_id.push(id)
-  console.log(id)
+  //console.log(id)
   var api_var1 = document.getElementById("api_var1").innerHTML;
   var api_url = document.getElementById("api_url").innerHTML;
   document.getElementById("question").innerHTML ='<div class="spinner-border" role="status"><span class="sr-only">'+"Loading..."+'</span></div>'
@@ -319,9 +330,9 @@ function click_skip(previd, id) {
     .then(response => response.json())
   };
   async function loadskip(api_url,api_var1,previd,id) {
-    console.log("click skip-yes_id", yes_id)
-    console.log("click skip-no_id",no_id)
-    console.log("click skip-skip_id",skip_id)
+    //console.log("click skip-yes_id", yes_id)
+    //console.log("click skip-no_id",no_id)
+    //console.log("click skip-skip_id",skip_id)
   var nextQuestion = await postRequest(api_url+'/GetNextSymptomQuestion', {UniqueProductIdentifier: api_var1,
                                                                             SymptomsThatArePresent: yes_id,
                                                                             SymptomsThatAreNOTPresent: no_id,
@@ -334,7 +345,10 @@ var solution_skip = await postRequest(api_url+'/PredictPartsGivenSymptoms', {Uni
 
 
 let sols =  solution_skip.partsRecommendation.map(function(sol) {
-                            return  '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:blue!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
+                            if ( sol.probablityPercentage > 75 ){
+                                return  '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:green!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
+                              }
+                              return '<div style="margin:20px 20px 20px 20px;"><span class="badge" style="background-color:blue!important;width:50px;">'+sol.probablityPercentage+'%</span><span style="margin-left:20px;font-size:large;">'+sol.partName+'</span><div style="margin-left:70px;"><p style="font-size:small;">Suggested PartId: '+sol.partId+'</p></div></div>'
                           })
 document.getElementById("solutions").innerHTML = sols.join("");
 document.getElementById("remote-solutions").innerHTML = '<h4>Possible remote solutions:</h4>'
@@ -384,7 +398,7 @@ function search() {
     ul = document.getElementById("myUL");
     li = ul.getElementsByTagName("li");
     for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByTagName("a")[0];
+        a = li[i].getElementsByTagName("button")[0];
         txtValue = a.textContent || a.innerText;
         if (txtValue.toUpperCase().indexOf(filter) > -1) {
             li[i].style.display = "";
